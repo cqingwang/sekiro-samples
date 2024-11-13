@@ -40,3 +40,5 @@ Thumbs.db
 *.apk
 build/
 apps/
+patch/*.apk
+patch/*.jar

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="cn.iinti.sekiro.demoapp">
+    package="cn.codec.server.rpcserver">
 
 
     <!-- 访问网络，网络定位需要上网 -->
@@ -31,7 +31,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="cn.iinti.sekiro.demoapp.MainActivity">
+        <activity android:name="cn.codec.server.rpcserver.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +39,21 @@
             </intent-filter>
         </activity>
 
-
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true"/>
+        <meta-data
+            android:name="xposeddescription"
+            android:value="rpc_client"/>
+        <meta-data
+            android:name="xposedminversion"
+            android:value="28"/>
+        <meta-data
+            android:name="android.support.VERSION"
+            android:value="26.1.0"/>
+        <meta-data
+            android:name="android.arch.lifecycle.VERSION"
+            android:value="27.0.0-SNAPSHOT"/>
     </application>
 
 </manifest>

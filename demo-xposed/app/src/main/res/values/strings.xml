@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">sekiro-demo</string>
-    <string name="accessibility_service_description">应用自动安装服务</string>
+    <string name="app_name">rpc_client</string>
+    <string name="accessibility_service_description">rpc_client</string>
 </resources>

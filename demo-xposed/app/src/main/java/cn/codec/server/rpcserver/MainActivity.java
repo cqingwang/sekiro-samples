@@ -1,4 +1,4 @@
-package cn.iinti.sekiro.demoapp;
+package cn.codec.server.rpcserver;
 
 import android.app.Activity;
 import android.os.Bundle;

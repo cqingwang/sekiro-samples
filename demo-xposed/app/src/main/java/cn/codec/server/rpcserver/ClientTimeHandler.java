@@ -1,4 +1,4 @@
-package cn.iinti.sekiro.demoapp;
+package cn.codec.server.rpcserver;
 
 
 import cn.iinti.sekiro3.business.api.interfaze.Action;
@@ -24,6 +24,6 @@ public class ClientTimeHandler implements RequestHandler {
                 e.printStackTrace();
             }
         }
-        sekiroResponse.success("process: " + XposedMain.loadPackageParam.processName + " : now:" + System.currentTimeMillis() + " your param1:" + param1);
+        sekiroResponse.success("process: " + TheEnter.loadPackageParam.processName + " : now:" + System.currentTimeMillis() + " your param1:" + param1);
     }
 }
