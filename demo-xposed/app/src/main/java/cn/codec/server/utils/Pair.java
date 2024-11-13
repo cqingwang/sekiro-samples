@@ -37,5 +37,10 @@ public class Pair<K, V> extends HashMap<K, V> {
         return this;
     }
 
+    public Pair<K, V> merge(Pair<K, V> pair) {
+        putAll(pair);
+        return this;
+    }
+
 
 }

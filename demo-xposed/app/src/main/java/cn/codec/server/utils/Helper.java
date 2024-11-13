@@ -28,10 +28,10 @@ public class Helper {
     }
 
     public static Object log(String... args) {
-        String tag = "Helper";
+        String tag = "Helper|";
         String info = String.join(" ", args);
         Log.d(tag, info);
-        System.out.println(tag + info);
+//        System.out.println(tag + info);
         return args[args.length - 1];
     }
 
@@ -108,7 +108,7 @@ public class Helper {
 
     public static void sp_put(XC_LoadPackage.LoadPackageParam lp, Pair<String, String> pair) {
         String pre = read(lp, Pair.presister);
-        if (pre != null) pair.merge(pre);
+        if (pre != null) pair = Pair.from(pre).merge(pair);
         write(lp, Pair.presister, pair.toString());
     }
 
@@ -116,8 +116,13 @@ public class Helper {
         sp_put(lp, new Pair<String, String>().add(key, value));
     }
 
+    public static String sp_read(XC_LoadPackage.LoadPackageParam lp) {
+        return read(lp, Pair.presister);
+    }
+
     public static String sp_get(XC_LoadPackage.LoadPackageParam lp, String key, String sec) {
-        String json = read(lp, Pair.presister);
+        String json = sp_read(lp);
+//        Helper.log("sp_read:", json);
         if (json != null) return (String) Pair.from(json).get(key);
         if (sec != null) {
             sp_put(lp, key, sec);

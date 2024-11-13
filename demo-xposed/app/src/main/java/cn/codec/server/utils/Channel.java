@@ -25,7 +25,7 @@ public class Channel {
     public SekiroClient newClient() {
         SekiroClient newClient = new SekiroClient(lp.packageName, getClientId(), Pair.host, Pair.port);
         newClient.setupSekiroRequestInitializer((sekiroRequest, registry) -> {
-            HashMap<String, Action> handler = build();
+            HashMap<String, Action> handler = build(lp);
             for (String action : handler.keySet()) {
                 registry.registerSekiroHandler(new ActionHandler() {
                     @Override
@@ -43,51 +43,50 @@ public class Channel {
         return newClient;
     }
 
-    public HashMap<String, Action> build() {
+    public HashMap<String, Action> build(XC_LoadPackage.LoadPackageParam lp) {
+
         HashMap<String, Action> handlers = new HashMap<>();
-        handlers.put("live", (request, response) -> {
-            Pair<String, Object> json = new Pair<String, Object>();
-            json.put("id", getClientId());
-            json.put("name", lp.packageName);
-            switch (lp.packageName) {
-                case Pair.ddmc: {
+
+        switch (lp.packageName) {
+            case Pair.ddmc: {
+                handlers.put("live", (request, response) -> {
+                    Pair<String, Object> json = new Pair<String, Object>();
+                    json.put("id", getClientId());
                     json.put("status", "done");
+                    json.put("ext", null);
                     response.success(json.toString());
-                    return;
-                }
-                default: {
-                    json.put("status", "not_match");
+                });
+
+                handlers.put("report", (request, response) -> {
+                    Pair<String, Object> json = new Pair<String, Object>();
+                    json.put("id", getClientId());
+                    json.put("status", "done");
+                    json.put("ext", Helper.sp_read(lp));
+
                     response.success(json.toString());
-                }
+                });
+
             }
-        });
+        }
+
         return handlers;
     }
 
-    public void lp_put(String key, String value) {
-        Helper.sp_put(this.lp, key, value);
-    }
-
-    public String lp_get(String key, String sec) {
-        return Helper.sp_get(this.lp, key, sec);
-    }
-
     public String getClientId() {
-        String loaded = lp_get(Pair.clientId, null);
-        if (loaded != null && loaded.length() > 0) {
-            Helper.log("clientId->[real]", loaded);
-            return loaded;
-        }
         String tmpid = new Date().getTime() + "";
-        Helper.log("clientId->[tmp]", tmpid);
-        lp_put(Pair.clientId, tmpid);
-        return tmpid;
+        String loaded = Helper.sp_get(lp, Pair.clientId, tmpid);
+        Helper.log("clientId->", loaded);
+        if (loaded.equals(tmpid)) Helper.sp_put(lp, Pair.clientId, loaded);
+        return loaded;
     }
 
     public void setClientId(String clientId) {
+        if (clientId == null || clientId.trim().length() == 0) return;
+        clientId = clientId.trim();
         String pre = getClientId();
-        lp_put(Pair.clientId, clientId);
-        if (pre != null && !pre.equals(clientId)) {
+        if (!clientId.equals(pre)) {
+            Helper.log("setClientId:", clientId);
+            Helper.sp_put(lp, Pair.clientId, clientId);
             restart();
         }
     }
