@@ -1,7 +1,5 @@
 package cn.codec.server.mod;
 
-import android.content.Context;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,8 +7,9 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.codec.server.rpcserver.Channel;
 import cn.codec.server.utils.Network;
-import cn.codec.server.utils.Channel;
+import cn.codec.server.utils.Pair;
 import cn.codec.server.utils.Helper;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -99,7 +98,22 @@ public class DDMC {
     public static void enter(XC_LoadPackage.LoadPackageParam lp) {
         Helper.onAppAttach(params -> {
             Helper.log("onAppAttach -> " + params);
-            Channel rpc = new Channel(lp) {
+            Channel rpc = new Channel(lp.packageName, Pair.host, Pair.port) {
+                @Override
+                public String read() {
+                    return Helper.sp_read(lp);
+                }
+
+                @Override
+                public String presister(String key, String sec) {
+                    return Helper.sp_get(lp, key, sec);
+                }
+
+                @Override
+                public void storage(String key, String value) {
+                    Helper.sp_put(lp, key, value);
+                }
+
                 @Override
                 public HashMap<String, Action> build() {
                     HashMap<String, Action> handlers = super.build();

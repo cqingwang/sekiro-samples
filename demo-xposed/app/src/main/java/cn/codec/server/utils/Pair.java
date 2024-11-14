@@ -10,7 +10,6 @@ import java.util.Map;
 public class Pair<K, V> extends HashMap<K, V> {
     public static final String presister = "mod_presister.txt";
 
-    public static final String clientId = "clientId";
     public static final String host = "121.199.168.122";
     public static final int port = 8810;
 
