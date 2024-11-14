@@ -49,11 +49,15 @@ public class DDMC {
                 Userinfo useinfo = getinfo(lp);
                 if (useinfo == null) return;
 
-                rpc.setClientId(useinfo.pddid);
-                Helper.sp_put(lp, "userid", useinfo.userid);
+                if (useinfo.pddid != null && useinfo.pddid.length() > 0) {
+                    Helper.toast(useinfo.pddid);
+                    rpc.setClientId(useinfo.pddid);
+                    Helper.sp_put(lp, "userid", useinfo.userid);
+                }
+
 
                 if (useinfo.userid == null) {
-                    Helper.toast(Helper.getSystemContext(), "请登录多多买菜账号");
+                    Helper.toast("请登录多多买菜账号:" + useinfo.pddid);
                     return;
                 }
                 Helper.log("userId =", useinfo.userid, "latestKey =", latestKey);

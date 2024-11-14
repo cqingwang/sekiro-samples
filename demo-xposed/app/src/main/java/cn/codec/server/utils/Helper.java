@@ -35,8 +35,8 @@ public class Helper {
         return args[args.length - 1];
     }
 
-    public static void toast(Context context, String msg) {
-        post(() -> Toast.makeText((Context) context, msg, Toast.LENGTH_LONG).show());
+    public static void toast(String msg) {
+        post(() -> Toast.makeText((Context) Helper.getSystemContext(), msg, Toast.LENGTH_LONG).show());
     }
 
 
