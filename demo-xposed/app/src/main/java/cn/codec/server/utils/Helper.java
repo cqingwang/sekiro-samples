@@ -88,6 +88,19 @@ public class Helper {
     }
 
 
+    public static void onAppAttach(MethodCall methodCall) {
+        try {
+            XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) {
+                    methodCall.doTask(param);
+                }
+            });
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void onActivityCreate(MethodCall methodCall) {
         XposedHelpers.findAndHookMethod(Activity.class, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override

@@ -10,11 +10,11 @@ import cn.iinti.sekiro3.business.api.interfaze.SekiroResponse;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class Channel {
-    private final XC_LoadPackage.LoadPackageParam lp;
+    protected final XC_LoadPackage.LoadPackageParam lp;
     private boolean running = false;
     private SekiroClient client = null;
 
-    interface Action {
+    public interface Action {
         void doTask(SekiroRequest request, SekiroResponse response);
     }
 
@@ -25,7 +25,7 @@ public class Channel {
     public SekiroClient newClient() {
         SekiroClient newClient = new SekiroClient(lp.packageName, getClientId(), Pair.host, Pair.port);
         newClient.setupSekiroRequestInitializer((sekiroRequest, registry) -> {
-            HashMap<String, Action> handler = build(lp);
+            HashMap<String, Action> handler = build();
             for (String action : handler.keySet()) {
                 registry.registerSekiroHandler(new ActionHandler() {
                     @Override
@@ -43,32 +43,24 @@ public class Channel {
         return newClient;
     }
 
-    public HashMap<String, Action> build(XC_LoadPackage.LoadPackageParam lp) {
-
+    public HashMap<String, Action> build() {
         HashMap<String, Action> handlers = new HashMap<>();
+        handlers.put("live", (request, response) -> {
+            Pair<String, Object> json = new Pair<String, Object>();
+            json.put("id", getClientId());
+            json.put("status", "done");
+            json.put("ext", null);
+            response.success(json.toString());
+        });
 
-        switch (lp.packageName) {
-            case Pair.ddmc: {
-                handlers.put("live", (request, response) -> {
-                    Pair<String, Object> json = new Pair<String, Object>();
-                    json.put("id", getClientId());
-                    json.put("status", "done");
-                    json.put("ext", null);
-                    response.success(json.toString());
-                });
+        handlers.put("report", (request, response) -> {
+            Pair<String, Object> json = new Pair<String, Object>();
+            json.put("id", getClientId());
+            json.put("status", "done");
+            json.put("ext", Helper.sp_read(lp));
 
-                handlers.put("report", (request, response) -> {
-                    Pair<String, Object> json = new Pair<String, Object>();
-                    json.put("id", getClientId());
-                    json.put("status", "done");
-                    json.put("ext", Helper.sp_read(lp));
-
-                    response.success(json.toString());
-                });
-
-            }
-        }
-
+            response.success(json.toString());
+        });
         return handlers;
     }
 
@@ -113,7 +105,7 @@ public class Channel {
             Helper.log("Already running");
             return;
         }
-        Helper.log("Starting...");
+        Helper.log("Starting ...");
         running = true;
         new Thread(() -> {
             this.client = newClient();

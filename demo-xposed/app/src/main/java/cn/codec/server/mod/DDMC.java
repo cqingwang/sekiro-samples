@@ -5,6 +5,7 @@ import android.content.Context;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -94,4 +95,21 @@ public class DDMC {
         });
 
     }
+
+    public static void enter(XC_LoadPackage.LoadPackageParam lp) {
+        Helper.onAppAttach(params -> {
+            Helper.log("onAppAttach -> " + params);
+            Channel rpc = new Channel(lp) {
+                @Override
+                public HashMap<String, Action> build() {
+                    HashMap<String, Action> handlers = super.build();
+                    //添加自定义处理
+                    return handlers;
+                }
+            };
+            rpc.start();
+            new DDMC().listenPddid(rpc, lp);
+        });
+    }
+
 }
